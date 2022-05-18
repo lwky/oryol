@@ -53,8 +53,11 @@ emscInputMgr::discard() {
 //------------------------------------------------------------------------------
 void
 emscInputMgr::setupCallbacks() {
-    o_assert(!this->inputSetup.HtmlElement.Empty());
-    const char* canvasId = this->inputSetup.HtmlElement.AsCStr();
+  o_assert(!this->inputSetup.HtmlElement.Empty());
+
+    // const char* canvasId = this->inputSetup.HtmlElement.AsCStr();
+    const char *canvasId = "canvas"; // LUUK
+  
     emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, emscKeyDown);
     emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, emscKeyUp);
     emscripten_set_keypress_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, true, emscKeyPress);
@@ -78,7 +81,10 @@ emscInputMgr::setupCallbacks() {
 void
 emscInputMgr::discardCallbacks() {
     o_assert(!this->inputSetup.HtmlElement.Empty());
-    const char* canvasId = this->inputSetup.HtmlElement.AsCStr();
+
+    // const char* canvasId = this->inputSetup.HtmlElement.AsCStr();
+    const char *canvasId = "canvas"; // LUUK
+
     emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, true, 0);
     emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, true, 0);    
     emscripten_set_keypress_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, true, 0);
@@ -412,9 +418,9 @@ emscInputMgr::emscMouseMove(int eventType, const EmscriptenMouseEvent* e, void* 
     if (self->pointerLockActive) {
         const glm::vec2 mov((float)e->movementX, (float)e->movementY);
         self->mouse.onMov(mov);
-    }
-    else {
-        const glm::vec2 pos((float)e->canvasX, (float)e->canvasY);
+    } else {
+        // const glm::vec2 pos((float)e->canvasX, (float)e->canvasY);
+        const glm::vec2 pos((float)e->targetX, (float)e->targetY); // LUUK
         self->mouse.onPosMov(pos);
     }
     return true;    
@@ -458,8 +464,10 @@ emscInputMgr::emscTouch(int eventType, const EmscriptenTouchEvent* e, void* user
     for (int i = 0; i < event.numTouches; i++) {
         touchEvent::point& curPoint = event.points[i];
         curPoint.identifier = e->touches[i].identifier;
-        curPoint.pos.x = e->touches[i].canvasX;
-        curPoint.pos.y = e->touches[i].canvasY;
+        // curPoint.pos.x = e->touches[i].canvasX;
+        // curPoint.pos.y = e->touches[i].canvasY;
+        curPoint.pos.x = e->touches[i].targetX; // LUUK
+        curPoint.pos.y = e->touches[i].targetY; // LUUK
         curPoint.isChanged = e->touches[i].isChanged;
     }
     self->onTouchEvent(event);
