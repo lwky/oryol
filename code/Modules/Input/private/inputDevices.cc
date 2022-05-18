@@ -230,7 +230,7 @@ mouseDevice::buttonUp(MouseButton::Code btn) const {
 //------------------------------------------------------------------------------
 void
 touchpadDevice::reset() {
-    this->touchStarted = false;
+    // this->touchStarted = false; // LUUK
     this->touchMoved = false;
     this->touchEnded = false;
     this->touchCancelled = false;
@@ -258,9 +258,11 @@ touchpadDevice::onTouchEvent(touchEvent::touchType type, const glm::vec2& p) {
             break;
         case touchEvent::ended:
             this->touchEnded = true;
+            this->touchStarted = false; // LUUK
             break;
         case touchEvent::cancelled:
             this->touchCancelled = true;
+            this->touchStarted = false; // Luuk
             break;
         default:
             break;
